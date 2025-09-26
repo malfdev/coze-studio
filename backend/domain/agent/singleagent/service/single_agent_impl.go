@@ -111,6 +111,10 @@ func (s *singleAgentImpl) StreamExecute(ctx context.Context, req *entity.Execute
 		ModelMgr:     s.ModelMgr,
 		ModelFactory: s.ModelFactory,
 		CPStore:      s.CPStore,
+
+		CustomVariables: req.CustomVariables,
+
+		ConversationID: req.ConversationID,
 	}
 	rn, err := agentflow.BuildAgent(ctx, conf)
 	if err != nil {

@@ -42,6 +42,11 @@ type Config struct {
 	ModelMgr     modelmgr.Manager
 	ModelFactory chatmodel.Factory
 	CPStore      compose.CheckPointStore
+
+	CustomVariables  map[string]string
+
+
+	ConversationID int64
 }
 
 const (
@@ -68,6 +73,11 @@ func BuildAgent(ctx context.Context, conf *Config) (r *AgentRunner, err error) {
 	avs, err := loadAgentVariables(ctx, avConf)
 	if err != nil {
 		return nil, err
+	}
+	if conf.CustomVariables != nil {
+		for k,v := range conf.CustomVariables {
+			avs[k] = v
+		}
 	}
 
 	promptVars := &promptVariables{
@@ -108,6 +118,8 @@ func BuildAgent(ctx context.Context, conf *Config) (r *AgentRunner, err error) {
 		userID:        conf.UserID,
 		agentIdentity: conf.Identity,
 		toolConf:      conf.Agent.Plugin,
+
+		conversationID: conf.ConversationID,
 	})
 	if err != nil {
 		return nil, err

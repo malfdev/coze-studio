@@ -37,10 +37,12 @@ type AgentRuntime struct {
 	AgentVersion     string
 	UserID           string
 	AgentID          int64
+	ConversationId   int64
 	IsDraft          bool
 	SpaceID          int64
 	ConnectorID      int64
 	PreRetrieveTools []*agentrun.Tool
+	CustomVariables  map[string]string
 
 	HistoryMsg []*schema.Message
 	Input      *schema.Message
