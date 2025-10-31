@@ -29,14 +29,15 @@ import (
 
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/coze-dev/coze-studio/backend/api/model/crossdomain/message"
-	workflowModel "github.com/coze-dev/coze-studio/backend/api/model/crossdomain/workflow"
 	"github.com/coze-dev/coze-studio/backend/api/model/workflow"
 	"github.com/coze-dev/coze-studio/backend/application/base/ctxutil"
-	crossagentrun "github.com/coze-dev/coze-studio/backend/crossdomain/contract/agentrun"
-	crossconversation "github.com/coze-dev/coze-studio/backend/crossdomain/contract/conversation"
-	crossmessage "github.com/coze-dev/coze-studio/backend/crossdomain/contract/message"
-	crossupload "github.com/coze-dev/coze-studio/backend/crossdomain/contract/upload"
+	"github.com/coze-dev/coze-studio/backend/bizpkg/debugutil"
+	crossagentrun "github.com/coze-dev/coze-studio/backend/crossdomain/agentrun"
+	crossconversation "github.com/coze-dev/coze-studio/backend/crossdomain/conversation"
+	crossmessage "github.com/coze-dev/coze-studio/backend/crossdomain/message"
+	message "github.com/coze-dev/coze-studio/backend/crossdomain/message/model"
+	crossupload "github.com/coze-dev/coze-studio/backend/crossdomain/upload"
+	workflowModel "github.com/coze-dev/coze-studio/backend/crossdomain/workflow/model"
 	agententity "github.com/coze-dev/coze-studio/backend/domain/conversation/agentrun/entity"
 	"github.com/coze-dev/coze-studio/backend/domain/upload/service"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/entity"
@@ -741,9 +742,6 @@ func (w *ApplicationService) convertToChatFlowRunResponseList(ctx context.Contex
 		spaceID        int64
 		executeID      int64
 
-		outputCount int32
-		inputCount  int32
-
 		intermediateMessage *message.Message
 
 		needRegeneratedMessage = true
@@ -818,19 +816,23 @@ func (w *ApplicationService) convertToChatFlowRunResponseList(ctx context.Contex
 					BotID:          strconv.FormatInt(bizID, 10),
 					Status:         vo.Completed,
 					ExecuteID:      strconv.FormatInt(executeID, 10),
-					Usage: &vo.Usage{
-						InputTokens:  ptr.Of(inputCount),
-						OutputTokens: ptr.Of(outputCount),
-						TokenCount:   ptr.Of(outputCount + inputCount),
-					},
 				}
+
+				if msg.StateMessage.Usage != nil {
+					chatDoneEvent.Usage = &vo.Usage{
+						InputTokens:  &msg.StateMessage.Usage.InputTokens,
+						OutputTokens: &msg.StateMessage.Usage.OutputTokens,
+						TokenCount:   ptr.Of(msg.StateMessage.Usage.OutputTokens + msg.StateMessage.Usage.OutputTokens),
+					}
+				}
+
 				data, err := sonic.MarshalString(chatDoneEvent)
 				if err != nil {
 					return nil, err
 				}
 
 				doneData, err := sonic.MarshalString(map[string]interface{}{
-					"debug_url": fmt.Sprintf(workflowModel.DebugURLTpl, executeID, spaceID, workflowID),
+					"debug_url": debugutil.GetWorkflowDebugURL(ctx, workflowID, spaceID, executeID),
 				})
 				if err != nil {
 					return nil, err
@@ -975,7 +977,7 @@ func (w *ApplicationService) convertToChatFlowRunResponseList(ctx context.Contex
 				})
 
 				doneData, _ := sonic.MarshalString(map[string]interface{}{
-					"debug_url": fmt.Sprintf(workflowModel.DebugURLTpl, executeID, spaceID, workflowID),
+					"debug_url": debugutil.GetWorkflowDebugURL(ctx, workflowID, spaceID, executeID),
 				})
 
 				responses = append(responses, &workflow.ChatFlowRunResponse{

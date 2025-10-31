@@ -24,11 +24,11 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/coze-dev/coze-studio/backend/api/model/conversation/common"
-	"github.com/coze-dev/coze-studio/backend/api/model/crossdomain/conversation"
+	conversation "github.com/coze-dev/coze-studio/backend/crossdomain/conversation/model"
 	"github.com/coze-dev/coze-studio/backend/domain/conversation/conversation/entity"
 	"github.com/coze-dev/coze-studio/backend/domain/conversation/conversation/internal/dal/model"
 	"github.com/coze-dev/coze-studio/backend/domain/conversation/conversation/internal/dal/query"
-	"github.com/coze-dev/coze-studio/backend/infra/contract/idgen"
+	"github.com/coze-dev/coze-studio/backend/infra/idgen"
 	"github.com/coze-dev/coze-studio/backend/pkg/lang/ptr"
 	"github.com/coze-dev/coze-studio/backend/pkg/lang/slices"
 )

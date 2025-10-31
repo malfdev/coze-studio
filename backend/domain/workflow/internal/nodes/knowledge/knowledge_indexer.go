@@ -27,15 +27,15 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/coze-dev/coze-studio/backend/api/model/crossdomain/knowledge"
-	crossknowledge "github.com/coze-dev/coze-studio/backend/crossdomain/contract/knowledge"
+	crossknowledge "github.com/coze-dev/coze-studio/backend/crossdomain/knowledge"
+	knowledge "github.com/coze-dev/coze-studio/backend/crossdomain/knowledge/model"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/entity"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/entity/vo"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/internal/canvas/convert"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/internal/execute"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/internal/nodes"
 	"github.com/coze-dev/coze-studio/backend/domain/workflow/internal/schema"
-	"github.com/coze-dev/coze-studio/backend/infra/contract/document/parser"
+	"github.com/coze-dev/coze-studio/backend/infra/document/parser"
 )
 
 type IndexerConfig struct {

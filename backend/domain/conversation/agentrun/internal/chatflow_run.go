@@ -26,12 +26,12 @@ import (
 
 	"github.com/cloudwego/eino/schema"
 
-	"github.com/coze-dev/coze-studio/backend/api/model/crossdomain/agentrun"
-	"github.com/coze-dev/coze-studio/backend/api/model/crossdomain/message"
-	crossworkflow "github.com/coze-dev/coze-studio/backend/crossdomain/contract/workflow"
+	agentrun "github.com/coze-dev/coze-studio/backend/crossdomain/agentrun/model"
+	message "github.com/coze-dev/coze-studio/backend/crossdomain/message/model"
+	crossworkflow "github.com/coze-dev/coze-studio/backend/crossdomain/workflow"
 	"github.com/coze-dev/coze-studio/backend/domain/conversation/agentrun/entity"
 	msgEntity "github.com/coze-dev/coze-studio/backend/domain/conversation/message/entity"
-	"github.com/coze-dev/coze-studio/backend/infra/contract/imagex"
+	"github.com/coze-dev/coze-studio/backend/infra/imagex"
 	"github.com/coze-dev/coze-studio/backend/pkg/errorx"
 	"github.com/coze-dev/coze-studio/backend/pkg/lang/ptr"
 	"github.com/coze-dev/coze-studio/backend/pkg/logs"
@@ -82,11 +82,11 @@ func (art *AgentRuntime) ChatflowRun(ctx context.Context, imagex imagex.ImageX) 
 			"USER_INPUT": concatWfInput(art),
 		}
 		if art.GetRunMeta().ChatflowParameters != nil {
-			for k,v := range art.GetRunMeta().ChatflowParameters {
+			for k, v := range art.GetRunMeta().ChatflowParameters {
 				chatInput[k] = v
 			}
 		}
-		wfStreamer, err = crossworkflow.DefaultSVC().StreamExecute(ctx, executeConfig,  chatInput)
+		wfStreamer, err = crossworkflow.DefaultSVC().StreamExecute(ctx, executeConfig, chatInput)
 	}
 	if err != nil {
 		return err
